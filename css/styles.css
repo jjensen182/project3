@@ -1,0 +1,18 @@
+body {
+      text-align: center;
+      color: white;
+      letter-spacing: 2px;
+      background-image: url("../img/star.jpg");
+      font-family: 'Cuprum', sans-serif;
+    }
+
+canvas { 
+      display: block;
+    }
+
+#test {
+	position: absolute;
+	margin-top: -12px;
+	margin-left: -400px;
+}
+

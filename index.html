@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html ng-app="space">
+<head>
+  <meta charset="utf-8" />
+  <title>Jupiter</title>
+  <link href='http://fonts.googleapis.com/css?family=Cuprum' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" href="css/bower_components/bootstrap/dist/css/bootstrap.min.css" />
+  <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+  <script src="liquidFillGauge.js" language="JavaScript"></script>
+</head>
+
+<body>
+  <h1>JUPITER</h1>
+  <button id="startButton">Start</button>
+  <script src="https://rawgithub.com/mrdoob/three.js/master/build/three.js"></script> <!-- Get the latest version of the Three.js library. -->
+  
+
+
+  <div id="test"></div>
+
+<section id="planet_facts" ng-controller="PanelController as panel">
+  <ul class="nav nav-pills">
+    <li ng-class="{ active: panel.isSelected(1) }"> 
+      <a href ng-click="panel.selectTab(1)">Description</a>
+    </li>
+    <li ng-class="{ active: panel.isSelected(2) }"> 
+      <a href ng-click="panel.selectTab(2)">Diameter</a>
+    </li>
+    <li ng-class="{active: panel.isSelected(3)  }"> 
+      <a href ng-click="panel.selectTab(3)">Makeup</a>
+    </li>
+  </ul>
+
+  <div class="panel" ng-show="panel.isSelected(1)">
+    <h4>Description</h4>
+    <p>Jupiter</p>
+  </div>
+
+  <div class="panel" ng-show="panel.isSelected(2)">
+    <h4>Diameter</h4>
+    <p>86,881 Miles in Diameter</p>
+    <p>asdasdsakdaslkdjasd</p>
+  </div>
+
+  <div class="panel" ng-show="panel.isSelected(3)">
+    <h4>Chemical Makeup</h4>
+    <p>
+      <h1>Hydrogen</h1>
+        <svg id="fillgauge3" width="19%" height="200"></svg>
+    </p>
+  </div>
+</section>
+
+
+
+  <script>
+    var bitmap = new Image();
+    bitmap.src = 'img/jupiter.jpg'; // Pre-load the bitmap, in conjunction with the Start button, to avoid any potential THREE.ImageUtils.loadTexture async issues.
+    bitmap.onerror = function () {
+      console.error("Error loading: " + bitmap.src);
+    }
+
+    var scene = new THREE.Scene(); // Create a Three.js scene object.
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // Define the perspective camera's attributes.
+
+    var renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer({ alpha: true }) : new THREE.CanvasRenderer(); // Fallback to canvas renderer, if necessary.
+    renderer.setClearColor( 0x000000, 0 ); // the default
+    renderer.setSize(window.innerWidth, window.innerHeight); // Set the size of the WebGL viewport.
+    //document.body.appendChild(renderer.domElement); // Append the WebGL viewport to the DOM.
+    document.getElementById("test").appendChild(renderer.domElement);
+
+
+
+    // Be aware that a light source is required for MeshPhongMaterial to work:
+    var pointLight = new THREE.PointLight(0xFFFFFF); // Set the color of the light source (white).
+    pointLight.position.set(100, 100, 250); // Position the light source at (x, y, z).
+    scene.add(pointLight); // Add the light source to the scene.
+
+    var texture = THREE.ImageUtils.loadTexture(bitmap.src); // Create texture object based on the given bitmap path.
+    var material = new THREE.MeshPhongMaterial({ map: texture }); // Create a material (for the spherical mesh) that reflects light, potentially causing sphere surface shadows.
+    var geometry = new THREE.SphereGeometry(60, 64, 64); // Radius size, number of vertical segments, number of horizontal rings.
+
+    var sphere = new THREE.Mesh(geometry, material); // Create a mesh based on the specified geometry (cube) and material (blue skin).
+    scene.add(sphere); // Add the sphere at (0, 0, 0).
+
+    camera.position.z = 150; // Move the camera away from the origin, down the positive z-axis.
+
+    var render = function () {
+      sphere.rotation.x += 0.002; // Rotate the sphere by a small amount about the x- and y-axes.
+      sphere.rotation.y += 0.005;
+
+      renderer.render(scene, camera); // Each time we change the position of the cube object, we must re-render it.
+      requestAnimationFrame(render); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
+    };
+
+    document.getElementById('startButton').addEventListener('click', function () {
+      render(); // Start the rendering of the animation frames.
+      
+    }, false);
+  </script>
+  <script type="text/javascript" src="js/bower_components/angular/angular.min.js"></script>
+  <script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>
